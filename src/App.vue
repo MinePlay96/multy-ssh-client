@@ -11,9 +11,9 @@
         v-model="currentTab" >
         <b-tab v-for="(connection, key) in tablist" :key="key">
           <template v-slot:title>
-            {{ connection.title }} <a @click="showSettings = true" v-if="tablist.length-1 != key" >&#9881;</a>
+            {{ connection.title }} <a @click="showSettings = true" v-if="key != Object.keys(tablist)[Object.keys(tablist).length-1]" >&#9881;</a>
           </template>
-          <Connection @bell="beep" @connected="AddNewTab" @changeTitle="changeTitle" :index="key" :SSHTunnels="connection.SSHTunnels" @close="closeConnection"></Connection>
+          <Connection @bell="beep" @connected="AddNewTab" @changeTitle="changeTitle" :index="parseInt(key)" :SSHTunnels="connection.SSHTunnels" @close="closeConnection"></Connection>
         </b-tab>
       </b-tabs>
       <SettingsModal :show.sync="showSettings" v-model="tablist[currentTab]"></SettingsModal>
@@ -29,9 +29,9 @@ import SettingsModal from "@/components/SettingsModal";
 export default {
   data() {
     return {
-      tablist: [
-        {title: 'Neue Verbindung', SSHTunnels: []}
-      ],
+      tablist: {
+        0: {title: 'Neue Verbindung', SSHTunnels: []}
+      },
       currentTab: 0,
       showSettings: false
     }
@@ -43,15 +43,14 @@ export default {
       );
       snd.play();
     },
-    AddNewTab(index) {
-      this.tablist[index];
-      this.tablist.push({title: 'Neue Verbindung', SSHTunnels: []});
+    AddNewTab() {
+      this.$set(this.tablist, Object.keys(this.tablist).length, {title: 'Neue Verbindung', SSHTunnels: []});
     },
     changeTitle(index, title) {
       this.tablist[index].title = title;
     },
     closeConnection(index) {
-      this.tablist.splice(index, 1);
+      this.$delete(this.tablist, index);
     }
   },
   components: { TitleBar, Connection, SettingsModal }
