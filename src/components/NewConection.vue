@@ -19,7 +19,7 @@
         <b-form-input placeholder="Username" v-model="username" required></b-form-input>
         <b-form-input placeholder="Password" type="password" v-model="password"></b-form-input>
       </b-form-group>
-      <b-form-file v-model="privatKey" placeholder="Privat Key auswählen" accept=".key"></b-form-file>
+      <b-form-file v-model="privateKey" placeholder="Privat Key auswählen" accept=".ppk,.pem,.key;id_*"></b-form-file>
       <b-button type="submit" variant="primary">Verbinden</b-button>
     </b-form>
     <div v-show="loading" class="mx-auto my-auto loader"></div>
@@ -28,6 +28,7 @@
 
 <script>
 import { Client } from "ssh2";
+import fs from "fs";
 
 export default {
   name: "NewConection",
@@ -37,7 +38,7 @@ export default {
       port: 22,
       username: null,
       password: null,
-      privatKey: null,
+      privateKey: null,
       error: null,
       SSHConnection: new Client(),
       loading: false
@@ -45,15 +46,19 @@ export default {
   },
   methods: {
     submit(event) {
+
       event.preventDefault();
       this.loading = true;
-      this.SSHConnection.connect({
+
+      var credentials = {
         host: this.host,
         port: this.port,
         username: this.username,
         password: this.password,
-        privatKey: this.privatKey
-      });
+        privateKey: this.privateKey ? fs.readFileSync(this.privateKey.path) : null
+      };
+
+      this.SSHConnection.connect(credentials);
     },
   },
   mounted() {
