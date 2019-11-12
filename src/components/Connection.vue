@@ -1,6 +1,6 @@
 <template>
   <div class="tab">
-      <NewConection v-if="!SSHConnection" @ready="connectTerm"></NewConection>
+      <NewConection v-if="!SSHConnection" @ready="connectTerm" @changeTitle="changeTitle"></NewConection>
       <Terminal v-else v-on:bell="$emit('bell')" v-bind:conn="SSHConnection" v-on:quit="closeTab"></Terminal>
       <SSHTunnel style="display:none;" v-for="(tunnel, key) in SSHTunnels" :key="key" :conn="SSHConnection" :tunnel="tunnel"></SSHTunnel>
   </div>
@@ -32,7 +32,9 @@ export default {
       // REWORKME: change title system 
       this.SSHConnection = SSHConnection;
       this.$emit('connected', this.index);
-      this.$emit('changeTitle', this.index, this.SSHConnection.config.username + '@' + this.SSHConnection.config.host);
+    },
+    changeTitle(title) {
+      this.$emit('changeTitle', this.index, title)
     }
   },
   components: {

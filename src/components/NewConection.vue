@@ -44,7 +44,8 @@ export default {
       error: null,
       SSHConnection: new Client(),
       loading: false,
-      NewConnectionEvent: null
+      NewConnectionEvent: null,
+      title: ''
     };
   },
   methods: {
@@ -76,6 +77,7 @@ export default {
       app.port = data.PortNumber;
       app.username = data.UserName;
       app.password = data.PassWord;
+      app.title = data.WinTitle;
       if (data.PublicKeyFile) {
         app.privateKey = {path: data.PublicKeyFile};
       }
@@ -85,6 +87,10 @@ export default {
     app.SSHConnection.on('ready', function() { 
       ipcRenderer.removeAllListeners('NewConnection');
       app.$emit("ready", app.SSHConnection);
+      if (!app.title) {
+        app.title = app.username + '@' + app.host
+      }
+      app.$emit("changeTitle", app.title);
     });
 
     app.SSHConnection.on('error', function(error) {

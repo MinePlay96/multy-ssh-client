@@ -74,22 +74,14 @@ function puTTYNewConnection(pw) {
 
         let name = item.name;
         switch (name) {
-          case 'HostName':
-            data[name] = item.value;
-            break;
-
+          
           case 'PortNumber':
             data[name] = parseInt(item.value);
             break;
-
+            
+          case 'HostName':
           case 'UserName':
-            data[name] = item.value;
-            break;
-
           case 'PublicKeyFile':
-            data[name] = item.value;
-            break;
-
           case 'WinTitle':
             data[name] = item.value;
             break;
