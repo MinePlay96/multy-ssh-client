@@ -27,6 +27,8 @@
 </template>
 
 <script>
+// TODO: move NewConnection to App and change the new tab method (rework this)
+import {ipcRenderer} from "electron";
 import { Client } from "ssh2";
 import fs from "fs";
 
@@ -41,13 +43,17 @@ export default {
       privateKey: null,
       error: null,
       SSHConnection: new Client(),
-      loading: false
+      loading: false,
+      NewConnectionEvent: null
     };
   },
   methods: {
     submit(event) {
 
-      event.preventDefault();
+      if (event) {
+        event.preventDefault();
+      }
+      
       this.loading = true;
 
       var credentials = {
@@ -62,9 +68,22 @@ export default {
     },
   },
   mounted() {
+
     let app = this
 
+    let ipcEvent = ipcRenderer.once('NewConnection', function(sender, data) {
+      app.host = data.HostName;
+      app.port = data.PortNumber;
+      app.username = data.UserName;
+      app.password = data.PassWord;
+      if (data.PublicKeyFile) {
+        app.privateKey = {path: data.PublicKeyFile};
+      }
+      app.submit();
+    })
+
     app.SSHConnection.on('ready', function() { 
+      ipcRenderer.removeAllListeners('NewConnection');
       app.$emit("ready", app.SSHConnection);
     });
 
@@ -72,7 +91,6 @@ export default {
       app.loading = false;
       app.error = error;
     });
-
   }
 };
 </script>

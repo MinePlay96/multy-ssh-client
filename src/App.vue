@@ -9,6 +9,7 @@
         nav-wrapper-class="col-4 col-sm-3 col-xl-2"
         content-class="col-8 col-sm-9 col-xl-10"
         v-model="currentTab" >
+        <!-- TODO: add resice logic if tab is shown -->
         <b-tab v-for="(connection, key) in tablist" :key="key">
           <template v-slot:title>
             {{ connection.title }} <a @click="showSettings = true" v-if="key != Object.keys(tablist)[Object.keys(tablist).length-1]" >&#9881;</a>
@@ -29,11 +30,13 @@ import SettingsModal from "@/components/SettingsModal";
 export default {
   data() {
     return {
+      // REWORKME: automaticly add new tab
       tablist: {
         0: {title: 'Neue Verbindung', SSHTunnels: []}
       },
       currentTab: 0,
-      showSettings: false
+      showSettings: false,
+      index: 1
     }
   },
   methods: {
@@ -43,8 +46,9 @@ export default {
       );
       snd.play();
     },
-    AddNewTab() {
-      this.$set(this.tablist, Object.keys(this.tablist).length, {title: 'Neue Verbindung', SSHTunnels: []});
+    AddNewTab(index) {
+      this.currentTab = index;
+      this.$set(this.tablist, this.index++, {title: 'Neue Verbindung', SSHTunnels: []});
     },
     changeTitle(index, title) {
       this.tablist[index].title = title;

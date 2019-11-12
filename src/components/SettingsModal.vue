@@ -8,7 +8,8 @@
             <b-button type="submit" variant="success">+</b-button>
             </b-input-group>
         </form>
-        <b-table :items="tab.SSHTunnels" :fields="['localPort','remoteIp','remotePort']" @row-dblclicked="removeTunnel"></b-table>
+        <!-- TODO: rework tabsystem -->
+        <b-table v-if="tab" :items="tab.SSHTunnels" :fields="['localPort','remoteIp','remotePort']" @row-dblclicked="removeTunnel"></b-table>
     </b-modal>
 </template>
 

@@ -20,7 +20,8 @@
     "ssh2": "^0.8.5",
     "vue": "^2.6.10",
     "xterm": "^4.2.0-vscode1",
-    "xterm-addon-fit": "^0.3.0"
+    "xterm-addon-fit": "^0.3.0",
+    "winreg": "^1.2.4"
   },
   "devDependencies": {
     "@babel/polyfill": "^7.4.4",

@@ -29,6 +29,7 @@ export default {
       this.$emit('close', this.index);
     },
     connectTerm(SSHConnection) {
+      // REWORKME: change title system 
       this.SSHConnection = SSHConnection;
       this.$emit('connected', this.index);
       this.$emit('changeTitle', this.index, this.SSHConnection.config.username + '@' + this.SSHConnection.config.host);
