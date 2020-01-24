@@ -72,7 +72,7 @@ export default {
 
     let app = this
 
-    let ipcEvent = ipcRenderer.once('NewConnection', function(sender, data) {
+    ipcRenderer.once('NewConnection', function(sender, data) {
       app.host = data.HostName;
       app.port = data.PortNumber;
       app.username = data.UserName;

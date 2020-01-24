@@ -3,7 +3,8 @@
 </template>
 
 <script>
-const net = require('net');
+//const net = require('net');
+const tunnel = require('tunnel-ssh');
 
 export default {
     name: 'SSHTunnel',
@@ -17,20 +18,25 @@ export default {
         }
     },
     mounted() {
-        var app = this
 
-        app.conn.forwardOut('127.0.0.1', app.tunnel.localPort, app.tunnel.remoteIp, app.tunnel.remotePort, function(err, stream) {
-            if (err) {
-                return app.conn.end();
-            }
-            
-            app.server = net.createServer(function(clientSocket) {
-                stream.pipe(clientSocket).pipe(stream).on('close', function() {
-                    app.server.close();
-                });
-            });
-            
-            app.server.listen(app.tunnel.localPort, '127.0.0.1');
+        let app = this;
+        let term = console;
+
+        let tunnelConfig = {
+            ...app.conn.config,
+            dstHost: app.tunnel.remoteIp,
+            dstPort: app.tunnel.remotePort,
+            localHost: '127.0.0.1',
+            localPort: app.tunnel.localPort,
+        }
+
+        this.server = tunnel(tunnelConfig, function (error) {
+            term.log('connected', error);
+        });
+    
+        // Use a listener to handle errors outside the callback
+        this.server.on('error', function(err){
+            term.error(err);
         });
     },
     destroyed() {
